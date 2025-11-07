@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moot Court Timer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 1200px;
+      width: 100%;
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-size: 48px;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .stage-label {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #7f8c8d;
+      background-color: #ecf0f1;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .timer-display {
+      background-color: #ecf0f1;
+      border: 3px solid #bdc3c7;
+      border-radius: 15px;
+      padding: 40px;
+      margin: 30px auto;
+      max-width: 800px;
+    }
+
+    .timer-label {
+      font-size: 96px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 0;
+    }
+
+    .button-frame {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .button-frame button {
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      color: white;
+    }
+
+    .button-frame button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .button-frame button:active {
+      transform: translateY(0);
+    }
+
+    .btn-start {
+      background-color: #27ae60;
+    }
+
+    .btn-pause {
+      background-color: #f39c12;
+    }
+
+    .btn-next {
+      background-color: #3498db;
+    }
+
+    .btn-previous {
+      background-color: #9b59b6;
+    }
+
+    .btn-reset {
+      background-color: #e74c3c;
+    }
+
+    .btn-clear {
+      background-color: #95a5a6;
+    }
+
+    .progress-container {
+      margin: 30px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #ecf0f1;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #27ae60;
+      transition: width 0.3s ease;
+      border-radius: 15px;
+    }
+
+    .progress-text {
+      font-size: 16px;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+
+    .overtime-section {
+      margin-top: 50px;
+    }
+
+    .overtime-section h2 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .overtime-table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .overtime-table th {
+      background-color: #34495e;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .overtime-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .overtime-table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .overtime-table .action-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .overtime-table .action-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .no-overtime {
+      font-style: italic;
+      color: #95a5a6;
+      padding: 40px;
+      font-size: 18px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #2c3e50;
+    }
+
+    .modal-content button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .modal-content button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Moot Court Timer</h1>
+    <div id="stage-label" class="stage-label">Current Stage: </div>
+    
+    <div class="timer-display">
+      <div id="timer-label" class="timer-label">00:00</div>
+    </div>
+
+    <div class="button-frame">
+      <button class="btn-start" onclick="startCountdown()">Start Timer</button>
+      <button class="btn-pause" onclick="togglePause()">Pause/Resume</button>
+      <button class="btn-next" onclick="nextStage()">Next Stage</button>
+      <button class="btn-previous" onclick="previousStage()">Previous Stage</button>
+      <button class="btn-reset" onclick="resetTimer()">Reset Timer</button>
+      <button class="btn-clear" onclick="clearOvertime()">Clear Overtime</button>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill" style="width: 4%;"></div>
+      </div>
+      <div id="progress-text" class="progress-text">Stage 1 of 25</div>
+    </div>
+
+    <div class="overtime-section">
+      <h2>Overtime Tracking</h2>
+      <table id="overtime-table" class="overtime-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Overtime (seconds)</th>
+            <th>Overtime (MM:SS)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="overtime-tbody">
+          <tr>
+            <td colspan="4" class="no-overtime">No overtime recorded yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="alert-modal" class="modal">
+    <div class="modal-content">
+      <p id="alert-message"></p>
+      <button onclick="closeAlert()">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const TIMING = [
+      ["Chamber Master", 60],
+      ["State Opening Statement", 420],
+      ["Prosecution Opening Statement", 300],
+      ["Defence Opening Statement", 300],
+      ["Prosecution Witness 1 - Examination in Chief", 360],
+      ["Prosecution Witness 1 - Cross by State", 420],
+      ["Prosecution Witness 1 - Cross by Defence", 420],
+      ["Prosecution Witness 2 - Examination in Chief", 360],
+      ["Prosecution Witness 2 - Cross by State", 420],
+      ["Prosecution Witness 2 - Cross by Defence", 420],
+      ["State Witness 1 - Examination in Chief", 360],
+      ["State Witness 1 - Cross by Prosecution", 240],
+      ["State Witness 1 - Cross by Defence", 240],
+      ["State Witness 2 - Examination in Chief", 360],
+      ["State Witness 2 - Cross by Prosecution", 240],
+      ["State Witness 2 - Cross by Defence", 240],
+      ["Defence Witness 1 - Examination in Chief", 360],
+      ["Defence Witness 1 - Cross by Prosecution", 420],
+      ["Defence Witness 1 - Cross by State", 420],
+      ["Defence Witness 2 - Examination in Chief", 360],
+      ["Defence Witness 2 - Cross by Prosecution", 420],
+      ["Defence Witness 2 - Cross by State", 420],
+      ["Closing Statement - Prosecution", 480],
+      ["Closing Statement - State", 300],
+      ["Closing Statement - Defence", 480]
+    ];
+
+    let stageIndex = 0;
+    let remainingTime = TIMING[stageIndex][1];
+    let warningIssued = false;
+    let overtimeAlertIssued = false;
+    let timerRunning = false;
+    let paused = true;
+    let countdownInterval;
+    let overtimeStart = null;
+
+    function updateDisplay() {
+      const minutes = Math.floor(Math.abs(remainingTime) / 60);
+      const seconds = Math.abs(remainingTime) % 60;
+      const allocatedMinutes = Math.floor(TIMING[stageIndex][1] / 60);
+      const allocatedSeconds = TIMING[stageIndex][1] % 60;
+      const allocatedTime = `${allocatedMinutes.toString().padStart(2, '0')}:${allocatedSeconds.toString().padStart(2, '0')}`;
+      
+      document.getElementById("stage-label").textContent = `Current Stage: ${TIMING[stageIndex][0]} (${allocatedTime})`;
+      document.getElementById("timer-label").textContent =
+        remainingTime >= 0 ? `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}` : `Overtime: ${minutes}:${seconds}`;
+      
+      // Update progress bar
+      const progress = ((stageIndex + 1) / TIMING.length) * 100;
+      document.getElementById("progress-fill").style.width = `${progress}%`;
+      document.getElementById("progress-text").textContent = `Stage ${stageIndex + 1} of ${TIMING.length}`;
+      
+      if (remainingTime === 120 && !warningIssued) {
+        showAlert("Warning", "2 minutes remaining!");
+        warningIssued = true;
+      }
+
+      if (remainingTime < 0 && !overtimeAlertIssued) {
+        showAlert("Overtime", "Allotted time has ended. Overtime has started!");
+        overtimeAlertIssued = true;
+        overtimeStart = -remainingTime;
+      }
+
+      if (remainingTime < -180) {
+        clearInterval(countdownInterval);
+        document.getElementById("timer-label").textContent = "Time limit exceeded by 3 minutes.";
+        timerRunning = false;
+      }
+    }
+
+    function showAlert(title, message) {
+      document.getElementById("alert-message").textContent = message;
+      document.getElementById("alert-modal").style.display = "flex";
+    }
+
+    function closeAlert() {
+      document.getElementById("alert-modal").style.display = "none";
+    }
+
+    function startCountdown() {
+      if (!timerRunning) {
+        timerRunning = true;
+        paused = false;
+        warningIssued = false;
+        overtimeAlertIssued = false;
+        countdownInterval = setInterval(countdown, 1000);
+      }
+    }
+
+    function countdown() {
+      if (!paused) {
+        remainingTime -= 1;
+        updateDisplay();
+      }
+    }
+
+    function togglePause() {
+      paused = !paused;
+    }
+
+    function nextStage() {
+      if (stageIndex < TIMING.length - 1) {
+        clearInterval(countdownInterval);
+        logOvertime();
+        stageIndex += 1;
+        resetStage();
+      } else {
+        showAlert("End", "All stages are complete.");
+      }
+    }
+
+    function previousStage() {
+      if (stageIndex > 0) {
+        clearInterval(countdownInterval);
+        logOvertime();
+        stageIndex -= 1;
+        resetStage();
+      } else {
+        showAlert("Notice", "You are already at the first stage.");
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      resetStage();
+    }
+
+    function resetStage() {
+      remainingTime = TIMING[stageIndex][1];
+      warningIssued = false;
+      overtimeAlertIssued = false;
+      timerRunning = false;
+      paused = true;
+      updateDisplay();
+    }
+
+    function logOvertime() {
+      if (remainingTime < 0) {
+        const overtime = -remainingTime;
+        const stageName = TIMING[stageIndex][0];
+        const overtimeMinutes = Math.floor(overtime / 60);
+        const overtimeSeconds = overtime % 60;
+        const overtimeFormatted = `${overtimeMinutes.toString().padStart(2, '0')}:${overtimeSeconds.toString().padStart(2, '0')}`;
+        
+        const tbody = document.getElementById("overtime-tbody");
+        
+        // Remove "No overtime recorded yet" message if it exists
+        const noOvertimeRow = tbody.querySelector('.no-overtime');
+        if (noOvertimeRow) {
+          noOvertimeRow.parentElement.remove();
+        }
+        
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${stageName}</td>
+          <td>${overtime}</td>
+          <td>${overtimeFormatted}</td>
+          <td><button class="action-btn" onclick="deleteOvertimeRow(this)">Delete</button></td>
+        `;
+        tbody.appendChild(row);
+      }
+    }
+
+    function deleteOvertimeRow(button) {
+      const row = button.closest('tr');
+      row.remove();
+      
+      // If no more overtime rows, show "No overtime recorded yet" message
+      const tbody = document.getElementById("overtime-tbody");
+      if (tbody.children.length === 0) {
+        const noOvertimeRow = document.createElement("tr");
+        noOvertimeRow.innerHTML = '<td colspan="4" class="no-overtime">No overtime recorded yet</td>';
+        tbody.appendChild(noOvertimeRow);
+      }
+    }
+
+    function clearOvertime() {
+      const tbody = document.getElementById("overtime-tbody");
+      tbody.innerHTML = '<tr><td colspan="4" class="no-overtime">No overtime recorded yet</td></tr>';
+    }
+
+    // Initialize display on page load
+    updateDisplay();
+  </script>
+</body>
+</html>

@@ -155,6 +155,7 @@
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      table-layout: fixed;
     }
 
     .overtime-table th {
@@ -164,12 +165,37 @@
       text-align: center;
       font-weight: 600;
       font-size: 16px;
+      word-wrap: break-word;
+    }
+
+    .overtime-table th:first-child {
+      text-align: left;
+      width: 45%;
+    }
+
+    .overtime-table th:nth-child(2) {
+      width: 18%;
+    }
+
+    .overtime-table th:nth-child(3) {
+      width: 18%;
+    }
+
+    .overtime-table th:nth-child(4) {
+      width: 19%;
     }
 
     .overtime-table td {
       padding: 12px;
       text-align: center;
       border-bottom: 1px solid #ecf0f1;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .overtime-table td:first-child {
+      text-align: left;
+      font-weight: 500;
     }
 
     .overtime-table tbody tr:hover {
@@ -239,6 +265,170 @@
 
     .modal-content button:hover {
       background-color: #2980b9;
+    }
+
+    /* Mobile Responsive Styles */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+      }
+
+      .stage-label {
+        font-size: 16px;
+        padding: 12px;
+        word-wrap: break-word;
+      }
+
+      .timer-display {
+        padding: 20px;
+        margin: 20px auto;
+      }
+
+      .timer-label {
+        font-size: 56px;
+      }
+
+      .button-frame {
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .button-frame button {
+        padding: 12px 20px;
+        font-size: 14px;
+        flex: 1 1 calc(50% - 10px);
+        min-width: 140px;
+      }
+
+      .progress-container {
+        margin: 20px 0;
+      }
+
+      .progress-bar {
+        height: 25px;
+      }
+
+      .progress-text {
+        font-size: 14px;
+      }
+
+      .overtime-section {
+        margin-top: 30px;
+        overflow-x: auto;
+      }
+
+      .overtime-section h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      .overtime-table {
+        font-size: 14px;
+      }
+
+      .overtime-table th,
+      .overtime-table td {
+        padding: 10px 8px;
+        font-size: 13px;
+      }
+
+      .overtime-table th:first-child,
+      .overtime-table td:first-child {
+        width: 35%;
+        font-size: 12px;
+      }
+
+      .overtime-table th:nth-child(2),
+      .overtime-table td:nth-child(2) {
+        width: 22%;
+        font-size: 11px;
+      }
+
+      .overtime-table th:nth-child(3),
+      .overtime-table td:nth-child(3) {
+        width: 22%;
+      }
+
+      .overtime-table th:nth-child(4),
+      .overtime-table td:nth-child(4) {
+        width: 21%;
+      }
+
+      .overtime-table .action-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .no-overtime {
+        padding: 20px;
+        font-size: 14px;
+      }
+
+      .modal-content {
+        width: 90%;
+        max-width: 350px;
+        padding: 20px;
+      }
+
+      .modal-content p {
+        font-size: 16px;
+      }
+
+      .modal-content button {
+        padding: 10px 25px;
+        font-size: 14px;
+      }
+    }
+
+    /* Extra small screens (phones in portrait) */
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .stage-label {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .timer-label {
+        font-size: 48px;
+      }
+
+      .button-frame button {
+        flex: 1 1 100%;
+        min-width: unset;
+      }
+
+      .overtime-table th,
+      .overtime-table td {
+        padding: 8px 4px;
+        font-size: 11px;
+      }
+
+      .overtime-table th:first-child,
+      .overtime-table td:first-child {
+        font-size: 10px;
+      }
+
+      .overtime-table th:nth-child(2),
+      .overtime-table td:nth-child(2) {
+        font-size: 10px;
+      }
+
+      .overtime-table .action-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
